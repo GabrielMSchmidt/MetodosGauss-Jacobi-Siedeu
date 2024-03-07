@@ -1,0 +1,11 @@
+{
+    "cSpell.words": [
+        "Matriz",
+        "mostrar",
+        "pivo"
+    ],
+    "files.associations": {
+        "iostream": "cpp",
+        "iomanip": "cpp"
+    }
+}
