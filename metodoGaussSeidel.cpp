@@ -7,7 +7,7 @@ void imprimirMatriz(float *a, int lin);
 float* escreverMatriz(int lin);
 bool testarConvergencia(float *a, int lin);
 void permutarLinhas(float *a, int lin, int linha1, int linha2);
-void gaussJacobi(float *A, int lin, float epsilon, float* x_inicial);
+void gaussSeidel(float *A, int lin, float epsilon, float* x_inicial);
 
 bool testarConvergencia(float *a, int lin) {
     for (int i = 0; i < lin; i++) {
@@ -32,29 +32,29 @@ void permutarLinhas(float *a, int lin, int linha1, int linha2) {
     }
 }
 
-void gaussJacobi(float *A, int lin, float epsilon, float* x_inicial) {
+void gaussSeidel(float *A, int lin, float epsilon, float* x_inicial) {
     float *a = A;
     int n = lin;
 
     if (!testarConvergencia(a, n)) {
-        cout << "A matriz não é diagonalmente dominante. Tentando permutar linhas..." << endl;
+        cout << "A matriz nao eh diagonalmente dominante" << endl;
         bool convergente = false;
         for (int i = 0; i < n; ++i) {
             for (int j = i + 1; j < n; ++j) {
                 permutarLinhas(a, n, i, j);
                 if (testarConvergencia(a, n)) {
-                    cout << "Linhas permutadas com sucesso!" << endl;
+                    cout << "Linhas permutadas" << endl;
                     convergente = true;
                     break;
                 }
-                permutarLinhas(a, n, j, i); // Revertendo a permutação
+                permutarLinhas(a, n, j, i); 
             }
             if (convergente) {
                 break;
             }
         }
         if (!convergente) {
-            cout << "Falha ao encontrar uma permutação de linhas que torne a matriz diagonalmente dominante. O método de Gauss-Jacobi pode não convergir." << endl;
+            cout << "Falha ao encontrar uma permutacao de linhas que torne a matriz diagonalmente dominante. O metodo de Gauss-Seidel pode nao convergir." << endl;
             exit(-1);
         }
     }
@@ -68,6 +68,11 @@ void gaussJacobi(float *A, int lin, float epsilon, float* x_inicial) {
         x[i] = x_inicial[i];
     }
 
+    cout << "Iteracao 0:" << endl;
+    for (int i = 0; i < n; i++) {
+        cout << "x[" << i << "] = " << x[i] << endl;
+    }
+
     do {
         iteracao++;
 
@@ -75,18 +80,17 @@ void gaussJacobi(float *A, int lin, float epsilon, float* x_inicial) {
             x_ant[i] = x[i];
         }
 
-        cout << "Iteracao " << iteracao << ":" << endl;
-
         for (int i = 0; i < n; i++) {
             float sum = 0.0;
             for (int j = 0; j < n; j++) {
                 if (j != i) {
-                    sum += a[i * (n + 1) + j] * x_ant[j];
+                    sum += a[i * (n + 1) + j] * x[j];
                 }
             }
             x[i] = (a[i * (n + 1) + n] - sum) / a[i * (n + 1) + i];
         }
 
+        cout << "Iteracao " << iteracao << ":" << endl;
         for (int i = 0; i < n; i++) {
             cout << "x[" << i << "] = " << x[i] << endl;
         }
@@ -96,8 +100,6 @@ void gaussJacobi(float *A, int lin, float epsilon, float* x_inicial) {
             erro += pow(x[i] - x_ant[i], 2);
         }
         erro = sqrt(erro);
-
-        cout << "Erro: " << erro << endl;
 
     } while (erro > epsilon);
 
@@ -132,7 +134,7 @@ float* escreverMatriz(int lin) {
 }
 
 int main() {
-    cout << "Bem-vindo ao metodo de Gauss-Jacobi" << endl;
+    cout << "Bem-vindo ao metodo de Gauss-Seidel" << endl;
     cout << "Qual eh a ordem da matriz? ";
 
     int n;
@@ -153,7 +155,7 @@ int main() {
         cin >> x_inicial[i];
     }
 
-    gaussJacobi(a, n, epsilon, x_inicial);
+    gaussSeidel(a, n, epsilon, x_inicial);
 
     delete[] a;
 
